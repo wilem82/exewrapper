@@ -1,0 +1,11 @@
+[package]
+name = "exewrapper"
+version = "0.1.0"
+authors = ["Yuri Geinish <wilemyvu@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+toml = "0"
+serde = "1"
+itertools = "0"
+serde_derive = "1"
