@@ -7,7 +7,8 @@ Runs an arbitrary child process and waits for its termination, while delegating 
 1. Install Rust (rust-lang.org)
 2. Clone this repo
 3. Run `cargo install --path . --force`
-   Or, just to build run `cargo build --release` and look in `target/release/`.
+  - Or, just to build run `cargo build --release` and look in `target/release/`.
+  - Or, build via `build.bat`, but you'll need to have `xargo` installed (see https://github.com/japaric/xargo). This variant provides the smallest binary size (277k as opposed to ~370k).
 
 # How to use
 
@@ -17,29 +18,31 @@ Full config contents with examples:
 ```toml
 bin = 'C:\Users\ivan\bin\busybox.exe'
 args = ["ash", "-c"]
-cli_args_as_one = true
+rust_args = false
+rust_args_as_one = false
 debug = false
+
+[env]
+HOME = 'C:\Users\ivan'
 ```
 
-Everything but `bin` is optional. `cli_args_as_one = true` will concatenate all `exewrapper`'s arguments with a space and provide it as a single argument to the child process. For example, with the config above, running `ashcmd.exe echo 'hello world'` will run
+Everything but `bin` is optional.
 
-- `C:\Users\ivan\bin\busybox.exe`
-- `ash`
-- `-c`
-- `echo 'hello world'`
+- `rust_args_as_one = true` will concatenate all `exewrapper`'s arguments with a space and provide it as a single argument to the child process. For example, with the config above, running `ashcmd.exe echo 'hello world'` will run
 
-With `cli_args_as_one = false` it would've been
+  - `C:\Users\ivan\bin\busybox.exe`
+  - `ash`
+  - `-c`
+  - `echo 'hello world'`
 
-- ...
-- `-c`
-- `echo`
-- `'hello`
-- `world'`
+  With `cli_args_as_one = false` it would've been
 
-Now, if you're using FAR Manager, you could
+  - ...
+  - `-c`
+  - `echo`
+  - `'hello`
+  - `world'`
 
-1. Type `far:config` and ENTER
-2. Set `System.Executor.Comspec` to `C:\Users\ivan\bin\ashcmd.exe`
-3. Set `System.Executor.ComspecArguments` to `{0}`
+- `rust_args = false` disables Rust's stdlib handling of the command line on Windows and bypasses the command line as is, as a single argument. This leaves the command line intact, whereas the Rust's stdlib processing removes double quotes and does more stuff.
 
-Or do something else with it. I don't know.
+- `[env]` section allows setting / overriding environment variables for the child process.
